@@ -7,7 +7,7 @@ $ python3 can_recv_draw.py
 __author__ = "Yoshio Akimoto <yoshio.akimoto@tetra-aviation.com>, Yoshihiro Nakagawa <yoshihiro.nakagawa@tetra-aviation.com>"
 __date__ = "22 Decembar 2023"
 
-__version__ = "0.9.2"
+__version__ = "1.0.0"
 __credits__ = "teTra Aviation Corp."
 
 import sys
@@ -85,12 +85,12 @@ contact_graph_xy =(
 number_of_esc = 9
 
 #global array
-esc_data_v = np.zeros(9)
-esc_throttle = np.zeros(9)
-esc_active = np.zeros(9)
-esc_active_timer = np.zeros(9)
+esc_data_v = np.zeros(number_of_esc)
+esc_throttle = np.zeros(number_of_esc)
+esc_active = np.zeros(number_of_esc)
+esc_active_timer = np.zeros(number_of_esc)
 
-contact_active = np.zeros(9)
+contact_active = np.zeros(number_of_esc)
 
 class PlotGraph:
     def __init__(self):
