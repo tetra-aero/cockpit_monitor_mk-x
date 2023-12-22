@@ -37,36 +37,23 @@ import can
 # ESC status Graphic location Data
 esc_graph_xy =(
 #Front Left
-  [70,70], 
-  [70,94],
-  [136,70],
-  [136,94],
-  [200,70],
-  [200,94],
+  [170,342], 
+  [420,342],
 
 #Front Right
-  [350,70],
-  [350,94],
-  [414,70],
-  [414,94],
-  [480,70],
-  [480,94],
+  [788,342],
+  [1040,342],
 
 #Rear Left
-  [70,270], 
-  [70,294],
-  [136,270],
-  [136,294],
-  [200,270],
-  [200,294],
+  [170,412], 
+  [420,412],
 
 #Rear Right
-  [350,270],
-  [350,294],
-  [414,270],
-  [414,294],
-  [480,270],
-  [480,294],
+  [788,412],
+  [1040,412],
+
+#Pusher
+  [605, 275],
 
 )
 
@@ -76,35 +63,21 @@ contact_graph_xy =(
 #Front Left
   [51,14], 
   [51+2,121],
-  [117,14],
-  [117+2,121],
-  [182,14],
-  [182+3,121],
 
 #Front Right
   [330,14],
   [330+2,121],
-  [395,14],
-  [395+2,121],
-  [461+1,14],
-  [461+2,121],
 
 #Rear Left
   [51,212], 
   [53,318],
-  [117,212],
-  [119,318],
-  [183,212],
-  [185,318],
 
 #Rear Right
   [330,212],
   [332,318],
-  [395,212],
-  [397,318],
-  [461,212],
-  [463,318],
 
+#Pusher
+  [332,318],
 )
 
 
@@ -116,13 +89,15 @@ contact_graph_xy =(
 #000081: CANID_CANBUS_Health_ask
 #000082: CANID_CANBUS_Health_res
 
-#global array
-esc_data_v = np.zeros(24)
-esc_throttle = np.zeros(24)
-esc_active = np.zeros(24)
-esc_active_timer = np.zeros(24)
+number_of_esc = 9
 
-contact_active = np.zeros(24)
+#global array
+esc_data_v = np.zeros(number_of_esc)
+esc_throttle = np.zeros(number_of_esc)
+esc_active = np.zeros(number_of_esc)
+esc_active_timer = np.zeros(number_of_esc)
+
+contact_active = np.zeros(number_of_esc)
 
 class PlotGraph:
     def __init__(self):
@@ -133,7 +108,7 @@ class PlotGraph:
         self.win.setWindowTitle('ESC Voltage')
         self.win.resize(800,600)
         self.plt = self.win.addPlot()
-        self.plt.setXRange(0, 24)
+        self.plt.setXRange(0, number_of_esc)
         #self.plt.setYRange(0, 50)
         self.plt.setYRange(30, 56)
         self.curve = self.plt.plot(pen=(0, 0, 255))
@@ -154,7 +129,7 @@ class PlotGraph:
         #Making 32 sample datas (Random)
         #for i in range(0, 32):
         #    self.data[i] = self.voltage_list[i] + np.random.rand() * 5
-        x = np.arange(24)
+        x = np.arange(number_of_esc)
         #y1 = np.linspace(0, 20, num=64)
 
         #棒グラフ描画
@@ -172,7 +147,7 @@ class PlotGraph2:
         self.win2 = pg.GraphicsLayoutWidget(show=True)
         self.win2.setWindowTitle('ESC throttle')
         self.plt2 = self.win2.addPlot()
-        self.plt2.setXRange(0, 24)
+        self.plt2.setXRange(0, number_of_esc)
         self.plt2.setYRange(0, 1000)
         self.curve2 = self.plt2.plot(pen=(0, 0, 255))
 
@@ -193,7 +168,7 @@ class PlotGraph2:
         #Making 32 sample datas (Random)
         #for i in range(0, 32):
         #    self.data[i] = self.voltage_list[i] + np.random.rand() * 5
-        x = np.arange(24)
+        x = np.arange(number_of_esc)
         #y1 = np.linspace(0, 20, num=64)
 
         #棒グラフ描画
@@ -209,7 +184,7 @@ class LineGraph:
         # UIを設定
         #self.win = pg.GraphicsWindow()
         self.win = pg.GraphicsLayoutWidget()
-        self.win.setWindowTitle('Avr.Voltage #24')
+        self.win.setWindowTitle('Avr.Voltage #9')
         self.plt = self.win.addPlot()
         self.plt.setYRange(30, 56)
         self.plt.setXRange(0, 10*60*10) #10min
@@ -254,59 +229,59 @@ bus4 = can.interface.Bus(channel = 'vcan_spi1.1', bustype='socketcan', bitrate=1
 
 def send_ecu_check():
     #000081: CANID_CANBUS_Health_ask
-    for i in range(0, 6):   #Gachacon 1-6, Front Left wing   #range(0, 6) -> 0-5
+    for i in range(0, 1):   #Gachacon 1-6, Front Left wing   #range(0, 6) -> 0-5
         msg = can.Message(arbitration_id = 0x08100 + i + 1,
                      data= [1,2,3,4],
                      is_extended_id = True)
         bus2.send(msg)
 
-    for i in range(6, 12):   #Gachacon 7-12, Front Right wing   #range(6, 12) -> 6-11
+    for i in range(2, 3):   #Gachacon 7-12, Front Right wing   #range(6, 12) -> 6-11
         msg = can.Message(arbitration_id = 0x08100 + i + 1,
                      data= [1,2,3,4],
                      is_extended_id = True)
         bus1.send(msg)
 
-    for i in range(12, 18):   #Gachacon 13-18, Rear Left wing   #range(12, 18) -> 12-17
+    for i in range(4, 5):   #Gachacon 13-18, Rear Left wing   #range(12, 18) -> 12-17
         msg = can.Message(arbitration_id = 0x08100 + i + 1,
                      data= [1,2,3,4],
                      is_extended_id = True)
         bus4.send(msg)
 
-    for i in range(18, 24):   #Gachacon 19-24, Rear Right wing   #range(18, 24) -> 18-23
+    for i in range(6, 7):   #Gachacon 19-8, Rear Right wing   #range(18, 8) -> 18-23
         msg = can.Message(arbitration_id = 0x08100 + i + 1,
                      data= [1,2,3,4],
                      is_extended_id = True)
         bus3.send(msg)
 
     #GUI status change
-    for i in range(0, 24):
+    for i in range(0, number_of_esc):
         esc_active[i] = 2   # 2= Yellow
         #esc_active_timer[i] = 3 * 10 # 3sec
 
 def send_contactor_on():
     #000012: contactor_on
-    for i in range(0, 6):        
+    for i in range(0, 1):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0xC0],
                      is_extended_id = True)
         bus2.send(msg)
         contact_active[i] = 1
 
-    for i in range(6, 12):        
+    for i in range(2, 3):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0xC0],
                      is_extended_id = True)
         bus1.send(msg)
         contact_active[i] = 1
 
-    for i in range(12, 18):        
+    for i in range(4, 5):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0xC0],
                      is_extended_id = True)
         bus4.send(msg)
         contact_active[i] = 1
 
-    for i in range(18, 24):        
+    for i in range(6, 7):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0xC0],
                      is_extended_id = True)
@@ -316,28 +291,28 @@ def send_contactor_on():
 
 def send_contactor_off():
     #000012: contactor_off
-    for i in range(0, 6):        
+    for i in range(0, 1):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0x00],
                      is_extended_id = True)
         bus2.send(msg)
         contact_active[i] = 2
 
-    for i in range(6, 12):        
+    for i in range(2, 3):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0x00],
                      is_extended_id = True)
         bus1.send(msg)
         contact_active[i] = 2
 
-    for i in range(12, 18):        
+    for i in range(4, 5):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0x00],
                      is_extended_id = True)
         bus4.send(msg)
         contact_active[i] = 2
 
-    for i in range(18, 24):        
+    for i in range(6, 7):        
         msg = can.Message(arbitration_id = 0x01200 + i + 1,
                      data= [0x00],
                      is_extended_id = True)
@@ -351,25 +326,26 @@ class Widget(QWidget):
         QWidget.__init__(self, parent)
 
         # Window set
-        self.resize(720, 400)
+        #self.resize(720, 400)
+        self.resize(1232, 688)
         self.setWindowTitle('Body Info.')
 
         # Button 1 set
         button1 = QPushButton('ECU CHK', self)
         button1.clicked.connect(send_ecu_check)
-        button1.move(580,10)
+        button1.move(1000,10)
 
 
         # Button 2 set
         button2 = QPushButton('CONTACT ON', self)
         button2.clicked.connect(send_contactor_on)
-        button2.move(580,50)
+        button2.move(1000,50)
 
 
         # Button 3 set
         button3 = QPushButton('CONTACT OFF', self)
         button3.clicked.connect(send_contactor_off)
-        button3.move(580,80)
+        button3.move(1000,80)
 
 
         # データを更新する関数を呼び出す時間を設定
@@ -382,21 +358,20 @@ class Widget(QWidget):
         painter = QPainter(self)
 
 	# Draw body Image
-        painter.drawPixmap(0,0,QPixmap("mk5_image.png"))
-
+        #painter.drawPixmap(0,0,QPixmap("./document/mk5_sn4_image.png"))
+        painter.drawPixmap(0,0,QPixmap("./document/mkx_sn1_image.png"))
 
         # ESC status monitor count down
-        #for i in range(0, 24):   
+        #for i in range(0, number_of_esc):   
         #    if esc_active_timer[i] ==0: 
         #        esc_active[i] = 0 # 0 : Black
         #
         #    elif esc_active[i] != 2: # 2 : Yellow
         #        esc_active_timer[i] = esc_active_timer[i] -1 
 
-
         # ESC status Draw
         painter.setPen(Qt.red)
-        for i in range(0, 24):
+        for i in range(0, number_of_esc):
             if esc_active[i] == 3:
                 painter.setBrush(Qt.green)
             elif esc_active[i] == 2:
@@ -405,11 +380,11 @@ class Widget(QWidget):
                 painter.setBrush(Qt.red)                
             else:
                 painter.setBrush(Qt.black)                
-            painter.drawRect(esc_graph_xy[i][0], esc_graph_xy[i][1],15,20)
+            painter.drawRect(esc_graph_xy[i][0], esc_graph_xy[i][1],25,25)
 
         # Contactor status Draw
         painter.setBrush(Qt.NoBrush)
-        for i in range(0, 24):
+        for i in range(0, number_of_esc):
             if contact_active[i] == 1:
                 painter.setPen(Qt.red)
             else:
@@ -458,7 +433,7 @@ class CallBackFunction(can.Listener):
         #    esc_data_v[i] = 40 + np.random.rand() * 5
 
         id = int(hex(msg.arbitration_id)[-2:],16)
-        if id <= 24: # MAX ID number check
+        if id <= number_of_esc: # MAX ID number check
             esc_data_v[id] = int((msg.data.hex())[1:],16)/10
             esc_active[id] = 3 # green
             #esc_active_timer[id] = 3*10 # 3sec
@@ -473,7 +448,7 @@ class CallBackFunction(can.Listener):
         #print((msg.data.hex())[1:])
 
         id = int(hex(msg.arbitration_id)[-2:],16)
-        if id <= 24: # MAX ID number check
+        if id <= number_of_esc: # MAX ID number check
             esc_throttle[id] = int((msg.data.hex())[1:],16)
             esc_active[id] = 3 # green
             #esc_active_timer[id] = 3*10 # 3sec
@@ -484,7 +459,7 @@ class CallBackFunction(can.Listener):
         print(msg)
 
         id = int(hex(msg.arbitration_id)[-2:],16)
-        if id <= 34: # MAX ID number check
+        if id <= number_of_esc: # MAX ID number check
             esc_active[id] = 3 # 3:green
             #esc_active_timer[id] = 3*10 # 3sec
         
