@@ -36,48 +36,43 @@ import can
 
 # ESC status Graphic location Data
 esc_graph_xy =(
-#Front Left
-  [170,342], 
-  [420,342],
-
-#Front Right
-  [788,342],
-  [1040,342],
-
-#Rear Left
-  [170,412], 
-  [420,412],
-
-#Rear Right
-  [788,412],
-  [1040,412],
-
-#Pusher
-  [605, 275],
-
+    #Front Left
+    [170,342], 
+    [420,342],
+    #Front Right
+    [788,342],
+    [1040,342],
+    #Rear Left
+    [170,412], 
+    [420,412],
+    #Rear Right
+    [788,412],
+    [1040,412],
+    #Pusher
+    [605, 275],
 )
 
 
 # Contactor Graphic location Data
 contact_graph_xy =(
 #Front Left
-  [51,14], 
-  [51+2,121],
+  [183-25,568-25], 
+  [429-25,597-25],
 
 #Front Right
-  [330,14],
-  [330+2,121],
+  [802-25,597-25],
+  [1049-25,568-25],
 
 #Rear Left
-  [51,212], 
-  [53,318],
+  [183-25,253-25], 
+  [429-25,227-25],
 
 #Rear Right
-  [330,212],
-  [332,318],
+  [802-25,227-25],
+  [1049-25,253-25],
 
 #Pusher
-  [332,318],
+  [616-25,252-25],
 )
 
 
@@ -120,14 +115,14 @@ class PlotGraph:
         self.timer.timeout.connect(self.update)
         self.timer.start(10)
 
-        #self.data = np.zeros(32)
-        #esc_data_v = np.zeros(32)
+        #self.data = np.zeros(number_of_esc)
+        #esc_data_v = np.zeros(number_of_esc)
 
     #graphic data update
     def update(self):
 
-        #Making 32 sample datas (Random)
-        #for i in range(0, 32):
+        #Making number_of_esc sample datas (Random)
+        #for i in range(0, number_of_esc):
         #    self.data[i] = self.voltage_list[i] + np.random.rand() * 5
         x = np.arange(number_of_esc)
         #y1 = np.linspace(0, 20, num=64)
@@ -158,15 +153,15 @@ class PlotGraph2:
         self.timer.timeout.connect(self.update)
         self.timer.start(10)
 
-        #self.data = np.zeros(32)
-        #esc_throttle = np.zeros(32)
+        #self.data = np.zeros(number_of_esc)
+        #esc_throttle = np.zeros(number_of_esc)
 
 
     #graphic data update
     def update(self):
 
-        #Making 32 sample datas (Random)
-        #for i in range(0, 32):
+        #Making number_of_esc sample datas (Random)
+        #for i in range(0, number_of_esc):
         #    self.data[i] = self.voltage_list[i] + np.random.rand() * 5
         x = np.arange(number_of_esc)
         #y1 = np.linspace(0, 20, num=64)
@@ -335,18 +330,15 @@ class Widget(QWidget):
         button1.clicked.connect(send_ecu_check)
         button1.move(1000,10)
 
-
         # Button 2 set
         button2 = QPushButton('CONTACT ON', self)
         button2.clicked.connect(send_contactor_on)
         button2.move(1000,50)
 
-
         # Button 3 set
         button3 = QPushButton('CONTACT OFF', self)
         button3.clicked.connect(send_contactor_off)
         button3.move(1000,80)
-
 
         # データを更新する関数を呼び出す時間を設定
         self.timer = QtCore.QTimer()
@@ -356,8 +348,8 @@ class Widget(QWidget):
     def paintEvent(self, event):
   
         painter = QPainter(self)
-
-	# Draw body Image
+	    
+        # Draw body Image
         #painter.drawPixmap(0,0,QPixmap("./document/mk5_sn4_image.png"))
         painter.drawPixmap(0,0,QPixmap("./document/mkx_sn1_image.png"))
 
@@ -389,7 +381,7 @@ class Widget(QWidget):
                 painter.setPen(Qt.red)
             else:
                 painter.setPen(Qt.white)
-            rectangle = QtCore.QRectF(contact_graph_xy[i][0], contact_graph_xy[i][1], 49.0, 49.0)       
+            rectangle = QtCore.QRectF(contact_graph_xy[i][0], contact_graph_xy[i][1], 50.0, 50.0)       
             painter.drawEllipse(rectangle)
     
         # White paint Full screen.
@@ -428,8 +420,8 @@ class CallBackFunction(can.Listener):
         #ESC Volt data
         #print((msg.data.hex())[1:])
 
-        #Making 32 sample datas (Random)
-        #for i in range(0, 32):
+        #Making number_of_esc sample datas (Random)
+        #for i in range(0, number_of_esc):
         #    esc_data_v[i] = 40 + np.random.rand() * 5
 
         id = int(hex(msg.arbitration_id)[-2:],16)
