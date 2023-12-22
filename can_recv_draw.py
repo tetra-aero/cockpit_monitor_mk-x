@@ -5,9 +5,9 @@ $ python3 can_recv_draw.py
 """
 #__all__ = ['sys']
 __author__ = "Yoshio Akimoto <yoshio.akimoto@tetra-aviation.com>, Yoshihiro Nakagawa <yoshihiro.nakagawa@tetra-aviation.com>"
-__date__ = "14 October 2022"
+__date__ = "22 Decembar 2023"
 
-__version__ = "1.0.0"
+__version__ = "0.9.2"
 __credits__ = "teTra Aviation Corp."
 
 import sys
@@ -52,7 +52,6 @@ esc_graph_xy =(
     [605, 275],
 )
 
-
 # Contactor Graphic location Data
 contact_graph_xy =(
 #Front Left
@@ -74,7 +73,6 @@ contact_graph_xy =(
 #Pusher
   [616-25,252-25],
 )
-
 
 #000013: CANID_ESC_voltage
 #000020: CANID_ESC_throttle
@@ -133,6 +131,7 @@ class PlotGraph:
         # data配列をデータとした、緑の棒グラフを作成
         bg1 = pg.BarGraphItem(x=x, height=esc_data_v, width=0.6, brush='g')
         self.plt.addItem(bg1)
+
 
 class PlotGraph2:
     def __init__(self):
@@ -200,7 +199,6 @@ class LineGraph:
         self.curve.setData(self.data)
 
 
-
 # CANバスの初期化 (#6,#7は未実装。予備)
 '''
 bus1 = can.interface.Bus(channel = 'can_spi0.0', bustype='socketcan', bitrate=125000, canfilters=None)   #Front Right wing from AvioDsubBoard and Physical Harness
@@ -221,6 +219,7 @@ bus4 = can.interface.Bus(channel = 'vcan_spi1.1', bustype='socketcan', bitrate=1
 #bus5 = can.interface.Bus(channel = 'vcan_spi1.2', bustype='socketcan', bitrate=125000, canfilters=None)
 #bus6 = can.interface.Bus(channel = 'vcan_spi2.0', bustype='socketcan', bitrate=125000, canfilters=None)
 #bus7 = can.interface.Bus(channel = 'vcan_spi2.1', bustype='socketcan', bitrate=125000, canfilters=None)
+
 
 def send_ecu_check():
     #000081: CANID_CANBUS_Health_ask
@@ -252,6 +251,7 @@ def send_ecu_check():
     for i in range(0, number_of_esc):
         esc_active[i] = 2   # 2= Yellow
         #esc_active_timer[i] = 3 * 10 # 3sec
+
 
 def send_contactor_on():
     #000012: contactor_on
@@ -313,7 +313,6 @@ def send_contactor_off():
                      is_extended_id = True)
         bus3.send(msg)
         contact_active[i] = 2
-
 
 
 class Widget(QWidget):
@@ -390,71 +389,66 @@ class Widget(QWidget):
         #painter.drawRect(self.rect())
 
 
-
-
-
-
-
-
-
 # すでに用意されているコールバック関数(can.Listenerクラスのon_message_received関数)をオーバーライド
 class CallBackFunction(can.Listener):
-  def on_message_received(self, msg):
-#    print("hoge")
-#    print(hex(msg.arbitration_id))
-#    print(msg)
-#    print(msg.data)
-#    print(msg.data.hex())
-
-    #Making 32 sample datas (Random)
-    #for i in range(0, 32):
-    #    esc_data_v[i] = 40 + np.random.rand() * 5
-
-
-    #000013: CANID_ESC_voltage
-    #ESC Volt (ID=0x13) Pickup
-    if re.search("0x13", hex(msg.arbitration_id)) != None:
+    def on_message_received(self, msg):
+        #print("hoge")
+        #print(hex(msg.arbitration_id))
         #print(msg)
-        #ESC ID
-        #print(hex(msg.arbitration_id)[-2:])
-        #ESC Volt data
-        #print((msg.data.hex())[1:])
-
-        #Making number_of_esc sample datas (Random)
-        #for i in range(0, number_of_esc):
-        #    esc_data_v[i] = 40 + np.random.rand() * 5
-
-        id = int(hex(msg.arbitration_id)[-2:],16)
-        if id <= number_of_esc: # MAX ID number check
-            esc_data_v[id] = int((msg.data.hex())[1:],16)/10
-            esc_active[id] = 3 # green
-            #esc_active_timer[id] = 3*10 # 3sec
-
-    #000020: CANID_ESC_throttle
-    #ESC throttle (ID=0x20) Pickup
-    if re.search("0x20", hex(msg.arbitration_id)) != None:
-        #print(msg)
-        #ESC ID
-        #print(hex(msg.arbitration_id)[-2:])
-        #ESC Volt data
-        #print((msg.data.hex())[1:])
-
-        id = int(hex(msg.arbitration_id)[-2:],16)
-        if id <= number_of_esc: # MAX ID number check
-            esc_throttle[id] = int((msg.data.hex())[1:],16)
-            esc_active[id] = 3 # green
-            #esc_active_timer[id] = 3*10 # 3sec
-
-    #000082: CANID_CANBUS_Health_res
-    #ESC Active (ID=0x82) Pickup
-    if re.search("0x82", hex(msg.arbitration_id)) != None:
-        print(msg)
-
-        id = int(hex(msg.arbitration_id)[-2:],16)
-        if id <= number_of_esc: # MAX ID number check
-            esc_active[id] = 3 # 3:green
-            #esc_active_timer[id] = 3*10 # 3sec
+        #print(msg.data)
+        #print(msg.data.hex())
         
+        #Making 32 sample datas (Random)
+        #for i in range(0, 32):
+            #esc_data_v[i] = 40 + np.random.rand() * 5
+            
+        #000013: CANID_ESC_voltage
+        #ESC Volt (ID=0x13) Pickup
+        if re.search("0x13", hex(msg.arbitration_id)) != None:
+            #print(msg)
+            #ESC ID
+            #print(hex(msg.arbitration_id)[-2:])
+            #ESC Volt data
+            #print((msg.data.hex())[1:])
+
+            #Making number_of_esc sample datas (Random)
+            #for i in range(0, number_of_esc):
+            #    esc_data_v[i] = 40 + np.random.rand() * 5
+
+            id = int(hex(msg.arbitration_id)[-2:],16)
+            if id <= number_of_esc: # MAX ID number check
+                esc_data_v[id] = int((msg.data.hex())[1:],16)/10
+                esc_active[id] = 3 # green
+                #esc_active_timer[id] = 3*10 # 3sec
+
+        #000020: CANID_ESC_throttle
+        #ESC throttle (ID=0x20) Pickup
+        if re.search("0x20", hex(msg.arbitration_id)) != None:
+            #print(msg)
+            #ESC ID
+            #print(hex(msg.arbitration_id)[-2:])
+            #ESC Volt data
+            #print((msg.data.hex())[1:])
+
+            id = int(hex(msg.arbitration_id)[-2:],16)
+            if id <= number_of_esc: # MAX ID number check
+                esc_throttle[id] = int((msg.data.hex())[1:],16)
+                esc_active[id] = 3 # green
+                #esc_active_timer[id] = 3*10 # 3sec
+
+        #000082: CANID_CANBUS_Health_res
+        #ESC Active (ID=0x82) Pickup
+        if re.search("0x82", hex(msg.arbitration_id)) != None:
+            print(msg)
+
+            id = int(hex(msg.arbitration_id)[-2:],16)
+            if id <= number_of_esc: # MAX ID number check
+                esc_active[id] = 3 # 3:green
+                #esc_active_timer[id] = 3*10 # 3sec
+            #pass
+        #pass
+    #pass
+#pass
 
 # コールバック関数のインスタンス生成
 call_back_function = CallBackFunction()
@@ -467,7 +461,6 @@ can.Notifier(bus4, [call_back_function, ])
 #can.Notifier(bus5, [call_back_function, ])
 #can.Notifier(bus6, [call_back_function, ])
 #can.Notifier(bus7, [call_back_function, ])
-
 
 # 何もしない処理（受信のコールバックのみ）
 if __name__ == "__main__":
