@@ -85,12 +85,12 @@ contact_graph_xy =(
 number_of_esc = 9
 
 #global array
-esc_data_v = np.zeros(number_of_esc)
-esc_throttle = np.zeros(number_of_esc)
-esc_active = np.zeros(number_of_esc)
-esc_active_timer = np.zeros(number_of_esc)
+esc_data_v = np.zeros(9)
+esc_throttle = np.zeros(9)
+esc_active = np.zeros(9)
+esc_active_timer = np.zeros(9)
 
-contact_active = np.zeros(number_of_esc)
+contact_active = np.zeros(9)
 
 class PlotGraph:
     def __init__(self):
@@ -416,8 +416,19 @@ class CallBackFunction(can.Listener):
             #    esc_data_v[i] = 40 + np.random.rand() * 5
 
             id = int(hex(msg.arbitration_id)[-2:],16)
-            if id <= number_of_esc: # MAX ID number check
-                esc_data_v[id] = int((msg.data.hex())[1:],16)/10
+
+            #if id == 8:
+            #print(id)
+            
+            #if id <= number_of_esc: # MAX ID number check
+            if id < number_of_esc: # MAX ID number check
+                voltage_hex = (msg.data.hex())[1:]
+                esc_data_v[id] = int(voltage_hex,16)/10
+                #esc_data_v[id] = int((msg.data.hex())[1:],16)
+                #esc_data_v[id] = int((msg.data.hex())[1:],16)/10
+                #print('{}, {}'.format(id, esc_data_v[id]))
+                #print(", ")
+                #print(esc_data_v[id])
                 esc_active[id] = 3 # green
                 #esc_active_timer[id] = 3*10 # 3sec
 
@@ -431,7 +442,8 @@ class CallBackFunction(can.Listener):
             #print((msg.data.hex())[1:])
 
             id = int(hex(msg.arbitration_id)[-2:],16)
-            if id <= number_of_esc: # MAX ID number check
+            #if id <= number_of_esc: # MAX ID number check
+            if id < number_of_esc: # MAX ID number check
                 esc_throttle[id] = int((msg.data.hex())[1:],16)
                 esc_active[id] = 3 # green
                 #esc_active_timer[id] = 3*10 # 3sec
@@ -442,7 +454,8 @@ class CallBackFunction(can.Listener):
             print(msg)
 
             id = int(hex(msg.arbitration_id)[-2:],16)
-            if id <= number_of_esc: # MAX ID number check
+            #if id <= number_of_esc: # MAX ID number check
+            if id < number_of_esc: # MAX ID number check
                 esc_active[id] = 3 # 3:green
                 #esc_active_timer[id] = 3*10 # 3sec
             #pass
