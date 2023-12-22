@@ -1,7 +1,8 @@
 # cockpit_monitor_mk-x
 Cockpit panel GUI teTra Mk-X
+
 - v1.0.0
-![v1.0.0 sample][/document/Screenshot_from_2023-12-22_21-03-31.png]
+![v1.0.0 sample](/document/Screenshot_from_2023-12-22_21-03-31.png)
 
 ## Requirement
 ```
